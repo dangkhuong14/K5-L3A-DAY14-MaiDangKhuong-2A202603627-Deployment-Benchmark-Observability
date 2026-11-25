@@ -61,9 +61,16 @@ Bốn service dùng chung mạng `internal`. Nginx chuyển request đến agent
 
 ## Part 3: Cloud Deployment
 
-### Exercise 3.1: Railway deployment
-- URL: https://your-app.railway.app
-- Screenshot: [Link to screenshot in repo]
+### Exercise 3.2: Render deployment
+- URL: https://lab14-ai20k-agent.onrender.com
+- Screenshots: [Dashboard](screenshots/dashboard.png) · [Deployment Live](screenshots/running.png) · [Bốn phép thử HTTP](screenshots/test.png)
+- Railway dùng `railway.toml` để chọn Dockerfile và kiểm tra `/health` cho service hiện tại. Render dùng `render.yaml` để mô tả cả web service và Key Value, chọn gói, region và tham chiếu `REDIS_URL` giữa hai dịch vụ.
+
+### Exercise 3.3: Cloud Run CI/CD
+1. Cloud Build cài dependencies rồi chạy `pytest tests/`.
+2. Docker build image với hai tag `$COMMIT_SHA` và `latest`, sau đó push cả hai lên Container Registry.
+3. Bước deploy dùng image theo commit để triển khai `ai-agent` ở `asia-southeast1`.
+4. File `service.yaml` mô tả cấu hình Cloud Run tương ứng, gồm giới hạn 1–10 instance, startup probe `/ready`, liveness probe `/health` và tham chiếu Secret Manager.
 
 ## Part 4: API Security
 
@@ -136,3 +143,4 @@ Với yêu cầu 10 USD/tháng của Exercise 4.4, dùng khóa Redis theo ngư�
 - CP3 — AI chạy hai bản API trong Docker, kiểm tra 401/200/429 và giải thích cost guard. Học viên đã tự kiểm tra.
 - CP4 — AI chạy thử health, readiness, SIGTERM và script kiểm tra session trên 3 instance, rồi ghi kết quả vào Part 5. Học viên chưa ghi nhận tự kiểm tra.
 - CP5 — AI hoàn thiện agent, Docker, Compose và cấu hình Railway, sửa lỗi Compose khi biến API key chưa đặt, rồi chạy bộ chấm đầy đủ trong WSL2 với Docker và đạt 12/12. Học viên đã tự kiểm tra.
+- CP6 — AI triển khai agent Part 6 và Key Value trên Render, chạy bốn phép thử public (200/200/401/200) và đối chiếu các file cấu hình. Học viên chưa ghi nhận tự kiểm tra.
