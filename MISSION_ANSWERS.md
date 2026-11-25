@@ -108,8 +108,31 @@ Với yêu cầu 10 USD/tháng của Exercise 4.4, dùng khóa Redis theo ngư�
 - **5.4 — Load balancing.** Chạy Compose với `--scale agent=3`. Năm request `POST /chat` qua Nginx ở cổng 8080 lần lượt đến các instance có hậu tố `910638 → 81c888 → 8a495b → 910638 → 81c888`.
 - **5.5 — Test stateless.** Với session `9f3d7915-d2d4-45eb-9f85-2bd669dd74c4`, `test_stateless.py` gửi 5 câu hỏi rồi đọc lại đủ 10 tin nhắn theo thứ tự (5 câu hỏi và 5 câu trả lời), dù cả 3 instance đã tham gia xử lý.
 
+## Part 6: Checklist Deliverable
+
+```text
+  📋 Checklist Deliverable
+     ✅ Dockerfile (multi-stage, < 500 MB)
+     ✅ docker-compose.yml (agent + redis)
+     ✅ .dockerignore
+     ✅ Health check endpoint (GET /health)
+     ✅ Readiness endpoint (GET /ready)
+     ✅ API Key authentication
+     ✅ Rate limiting
+     ✅ Cost guard
+     ✅ Config từ environment variables
+     ✅ Structured logging
+     ✅ Graceful shutdown
+     ✅ Public URL ready (Railway / Render config)
+----------------------------------------------------------------
+  Result: 12/12 tiêu chí đạt · 41/41 checks passed
+  🎉 PASS 12/12 — PRODUCTION READY! Deploy nào!
+================================================================
+```
+
 ## AI log
 
 - Exercise 1.3 — Yêu cầu AI đối chiếu hai bản `app.py` và điền bảng so sánh. Phần tự kiểm tra của học viên: hiểu được các anti patterns và tại sao dùng nó
 - CP3 — AI chạy hai bản API trong Docker, kiểm tra 401/200/429 và giải thích cost guard. Học viên đã tự kiểm tra.
 - CP4 — AI chạy thử health, readiness, SIGTERM và script kiểm tra session trên 3 instance, rồi ghi kết quả vào Part 5. Học viên chưa ghi nhận tự kiểm tra.
+- CP5 — AI hoàn thiện agent, Docker, Compose và cấu hình Railway, sửa lỗi Compose khi biến API key chưa đặt, rồi chạy bộ chấm đầy đủ trong WSL2 với Docker và đạt 12/12. Học viên đã tự kiểm tra.
