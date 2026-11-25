@@ -144,3 +144,4 @@ Với yêu cầu 10 USD/tháng của Exercise 4.4, dùng khóa Redis theo ngư�
 - CP4 — AI chạy thử health, readiness, SIGTERM và script kiểm tra session trên 3 instance, rồi ghi kết quả vào Part 5. Học viên chưa ghi nhận tự kiểm tra.
 - CP5 — AI hoàn thiện agent, Docker, Compose và cấu hình Railway, sửa lỗi Compose khi biến API key chưa đặt, rồi chạy bộ chấm đầy đủ trong WSL2 với Docker và đạt 12/12. Học viên đã tự kiểm tra.
 - CP6 — AI triển khai agent Part 6 và Key Value trên Render, chạy bốn phép thử public (200/200/401/200) và đối chiếu các file cấu hình. Học viên chưa ghi nhận tự kiểm tra.
+- CP8 — AI sửa đường dẫn home của user trong Dockerfile production, chạy Locust và promtool, đối chiếu trace với log, đo hai alert. Học viên phụ trách chụp ảnh minh chứng và báo cáo.
