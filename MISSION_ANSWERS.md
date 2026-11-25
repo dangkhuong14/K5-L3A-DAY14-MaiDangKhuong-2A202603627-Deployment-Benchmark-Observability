@@ -101,9 +101,15 @@ Với yêu cầu 10 USD/tháng của Exercise 4.4, dùng khóa Redis theo ngư�
 ## Part 5: Scaling & Reliability
 
 ### Exercise 5.1-5.5: Implementation notes
-[Your explanations and test results]
+
+- **5.1 — Health checks.** Bản develop trả `200 OK` cho cả hai endpoint. `/health` báo `status: ok`, cho biết tiến trình còn phản hồi. `/ready` báo `ready: true`, cho biết agent đã khởi tạo xong và có thể nhận request.
+- **5.2 — Graceful shutdown.** Sau khi gửi `SIGTERM`, log lần lượt ghi `Graceful shutdown initiated...`, `Shutdown complete` và `Finished server process`. Lần thử này gửi tín hiệu sau khi hai request đã hoàn tất.
+- **5.3 — Stateless.** Agent đọc và ghi lịch sử trong Redis theo khóa `session:<session_id>`. Nhờ có kho dữ liệu chung, instance nhận câu hỏi tiếp theo vẫn đọc được các lượt trao đổi trước.
+- **5.4 — Load balancing.** Chạy Compose với `--scale agent=3`. Năm request `POST /chat` qua Nginx ở cổng 8080 lần lượt đến các instance có hậu tố `910638 → 81c888 → 8a495b → 910638 → 81c888`.
+- **5.5 — Test stateless.** Với session `9f3d7915-d2d4-45eb-9f85-2bd669dd74c4`, `test_stateless.py` gửi 5 câu hỏi rồi đọc lại đủ 10 tin nhắn theo thứ tự (5 câu hỏi và 5 câu trả lời), dù cả 3 instance đã tham gia xử lý.
 
 ## AI log
 
 - Exercise 1.3 — Yêu cầu AI đối chiếu hai bản `app.py` và điền bảng so sánh. Phần tự kiểm tra của học viên: hiểu được các anti patterns và tại sao dùng nó
 - CP3 — AI chạy hai bản API trong Docker, kiểm tra 401/200/429 và giải thích cost guard. Học viên đã tự kiểm tra.
+- CP4 — AI chạy thử health, readiness, SIGTERM và script kiểm tra session trên 3 instance, rồi ghi kết quả vào Part 5. Học viên chưa ghi nhận tự kiểm tra.
