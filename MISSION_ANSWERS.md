@@ -68,10 +68,35 @@ Bốn service dùng chung mạng `internal`. Nginx chuyển request đến agent
 ## Part 4: API Security
 
 ### Exercise 4.1-4.3: Test results
-[Paste your test outputs]
+Trích output `curl -i` khi gửi `POST /ask` với `{"question":"Hello"}` trong container lab.
+
+```text
+4.1 · Develop, thiếu X-API-Key
+HTTP/1.1 401 Unauthorized
+{"detail":"Missing API key. Include header: X-API-Key: <your-key>"}
+
+4.1 · Develop, có X-API-Key hợp lệ
+HTTP/1.1 200 OK
+{"question":"Hello","answer":"Tôi là AI agent được deploy lên cloud. Câu hỏi của bạn đã được nhận."}
+
+4.2 · Production, POST /auth/token bằng tài khoản student
+HTTP/1.1 200 OK
+
+4.3 · POST /ask với Bearer token, request đầu tiên
+HTTP/1.1 200 OK
+
+4.3 · Cùng token, request thứ 11 trong 60 giây
+HTTP/1.1 429 Too Many Requests
+x-ratelimit-limit: 10
+x-ratelimit-remaining: 0
+retry-after: 59
+{"detail":{"error":"Rate limit exceeded","limit":10,"window_seconds":60,"retry_after_seconds":59}}
+```
 
 ### Exercise 4.4: Cost guard implementation
-[Explain your approach]
+Rate limit giới hạn số request mỗi phút. Cost guard giới hạn chi phí vì mỗi request có thể dùng số token khác nhau. Bản mẫu tính phí theo token đầu vào và đầu ra, lưu trong RAM và trả HTTP 402 khi người dùng đã hết ngân sách 1 USD/ngày.
+
+Với yêu cầu 10 USD/tháng của Exercise 4.4, dùng khóa Redis theo người dùng và tháng. Trước khi gọi LLM, kiểm tra và giữ chỗ chi phí ước tính trong một thao tác nguyên tử để các request đồng thời không cùng tiêu phần ngân sách còn lại. Nếu vượt 10 USD thì trả 402. Sau khi gọi, cập nhật theo chi phí thực tế. Sang tháng mới dùng khóa mới.
 
 ## Part 5: Scaling & Reliability
 
@@ -81,3 +106,4 @@ Bốn service dùng chung mạng `internal`. Nginx chuyển request đến agent
 ## AI log
 
 - Exercise 1.3 — Yêu cầu AI đối chiếu hai bản `app.py` và điền bảng so sánh. Phần tự kiểm tra của học viên: hiểu được các anti patterns và tại sao dùng nó
+- CP3 — AI chạy hai bản API trong Docker, kiểm tra 401/200/429 và giải thích cost guard. Học viên đã tự kiểm tra.
