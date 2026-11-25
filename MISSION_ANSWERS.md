@@ -22,14 +22,42 @@ tải cao có thể gây làm chậm.
 ## Part 2: Docker
 
 ### Exercise 2.1: Dockerfile questions
-1. Base image: [Your answer]
-2. Working directory: [Your answer]
-...
+1. Base image: `python:3.11` và `alapine:3.19`.
+2. Working directory: `/app`.
+3. Copy `requirements.txt` trước để docker dùng lại layer cài thư viện khi chỉ thay đổi mã nguồn.
+4. `ENTRYPOINT` chọn chương trình chạy. `CMD` đặt lệnh hoặc đối số mặc định, có thể thay khi gọi `docker run`.
+
+### Exercise 2.2: Build và run
+
+Chạy từ gốc repo:
+
+```bash
+docker build -f 02-docker/develop/Dockerfile -t my-agent:develop .
+docker run -d --rm -p 127.0.0.1:56246:8000 my-agent:develop
+curl -X POST "http://127.0.0.1:56246/ask?question=What%20is%20Docker%3F"
+```
+
+Kết quả: HTTP 200, `{"answer":"Container là cách đóng gói app để chạy ở mọi nơi. Build once, run anywhere!"}`. Kích thước image develop: 1154,31 MB.
 
 ### Exercise 2.3: Image size comparison
-- Develop: [X] MB
-- Production: [Y] MB
-- Difference: [Z]%
+- Develop: 1154,31 MB
+- Production: 162,88 MB
+- Difference: giảm 85,89%
+
+Stage 1 (`builder`) cài `gcc`, `libpq-dev` và các thư viện Python. Stage 2 (`runtime`) dùng `python:3.11-slim`, chép thư viện Python từ builder và chạy mã nguồn bằng `appuser`. Image cuối nhỏ hơn nhờ base image slim và việc giữ công cụ biên dịch ở stage 1.
+
+### Exercise 2.4: Docker Compose stack
+
+```text
+Client → nginx:80 → agent:8000
+                       ├── REDIS_URL  → redis:6379
+                       └── QDRANT_URL → qdrant:6333
+```
+
+Bốn service dùng chung mạng `internal`. Nginx chuyển request đến agent. Redis và Qdrant là hai dịch vụ được cấu hình cho agent. Trong bài này, handler `/ask` gọi mock LLM trực tiếp.
+
+- `GET http://localhost/health` → HTTP 200, trả về `"status":"ok"`.
+- `POST http://localhost/ask` với JSON `{"question":"Explain microservices"}` → HTTP 200, trả về `{"answer":"Agent đang hoạt động tốt! (mock response) Hỏi thêm câu hỏi đi nhé."}`.
 
 ## Part 3: Cloud Deployment
 
@@ -52,4 +80,4 @@ tải cao có thể gây làm chậm.
 
 ## AI log
 
-- Exercise 1.3 — Yêu cầu AI đối chiếu hai bản `app.py` và điền bảng so sánh. Phần tự kiểm tra của học viên: chưa ghi nhận.
+- Exercise 1.3 — Yêu cầu AI đối chiếu hai bản `app.py` và điền bảng so sánh. Phần tự kiểm tra của học viên: hiểu được các anti patterns và tại sao dùng nó
